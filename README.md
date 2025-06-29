@@ -1,5 +1,48 @@
 # TOEIC Learning Platform
 
+## ✨ Tính năng chính
+
+- 📚 **Học theo Part**: Luyện tập từng phần thi TOEIC riêng biệt
+- 🧠 **Flashcards thông minh**: Hệ thống ôn tập từ vựng với thuật toán Spaced Repetition (SM-2)
+- 🎵 **Audio Player nâng cao**: Phát âm thanh với đầy đủ chức năng (play/pause, volume, progress bar)
+- 📝 **Quản lý nội dung**: Giao diện admin để thêm/sửa/xóa câu hỏi
+- 🎨 **Giao diện hiện đại**: UI/UX đẹp mắt với Tailwind CSS và shadcn/ui
+- 📱 **Responsive**: Tương thích với mọi thiết bị
+
+## 🖼️ Giao diện
+
+### Trang chủ
+![Homepage](img/homepage.png)
+*Giao diện trang chủ với navigation và thống kê tổng quan*
+
+### Học theo Part
+![Part Learning](img/part.png)
+*Giao diện luyện tập theo từng phần thi TOEIC với audio player nâng cao*
+
+### Flashcards
+![Flashcards](img/flashcard.png)
+*Hệ thống flashcards thông minh với thuật toán Spaced Repetition*
+
+### Luyện tập
+![Practice](img/practice.png)
+*Giao diện luyện tập tổng hợp*
+
+## 🚀 Công nghệ sử dụng
+
+- **Frontend**: Next.js 14 với App Router
+- **UI Framework**: Tailwind CSS + shadcn/ui
+- **Database**: PostgreSQL với Prisma ORM
+- **File Storage**: MinIO
+- **Audio**: HTML5 Audio API với custom controls
+- **Deployment**: Docker với multi-platform support
+
+## 🛠️ Cài đặt
+
+### Yêu cầu hệ thống
+- Node.js 18+
+- PostgreSQL
+- MinIO (hoặc S3-compatible storage)
+
 ## Hướng dẫn cài đặt và chạy
 
 ### Yêu cầu hệ thống
