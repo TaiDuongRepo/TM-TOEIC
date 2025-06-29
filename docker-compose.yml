@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: toeic_postgres
+    environment:
+      POSTGRES_DB: toeic_db
+      POSTGRES_USER: toeic_user
+      POSTGRES_PASSWORD: toeic_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    container_name: toeic_minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+
+  nextjs:
+    build:
+      context: ./tm-toeic-frontend
+      dockerfile: Dockerfile
+    container_name: toeic_nextjs
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://toeic_user:toeic_password@postgres:5432/toeic_db
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin123
+      - MINIO_BUCKET_NAME=toeic-files
+      - MINIO_USE_SSL=false
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=your-nextauth-secret-key-here
+    depends_on:
+      - postgres
+      - minio
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  minio_data:

@@ -1,0 +1,131 @@
+# Dev Step
+
+Add essential shadcn/ui components
+```bash
+npx shadcn@latest add button card input label textarea select
+```
+
+Installing database and storage dependencies
+```bash
+npm install @prisma/client prisma pg @types/pg minio
+```
+
+Initializing Prisma ORM.
+```
+npx prisma init
+```
+
+creating Prisma schema
+```bash
+echo """
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String      @id @default(uuid())
+  username  String      @unique
+  email     String      @unique
+  password  String
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+  flashcards Flashcard[]
+
+  @@map("users")
+}
+
+model Part {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String?
+  questions   Question[]
+
+  @@map("parts")
+}
+
+model Question {
+  id           String      @id @default(uuid())
+  partId       String      @map("part_id")
+  questionText String?     @map("question_text")
+  questionType String      @map("question_type")
+  imageUrl     String?     @map("image_url")
+  audioUrl     String?     @map("audio_url")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  part         Part        @relation(fields: [partId], references: [id], onDelete: Cascade)
+  options      Option[]
+  explanation  Explanation?
+
+  @@map("questions")
+}
+
+model Option {
+  id         String   @id @default(uuid())
+  questionId String   @map("question_id")
+  optionText String   @map("option_text")
+  isCorrect  Boolean  @map("is_correct")
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("options")
+}
+
+model Explanation {
+  id              String   @id @default(uuid())
+  questionId      String   @unique @map("question_id")
+  explanationText String   @map("explanation_text")
+  question        Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("explanations")
+}
+
+model Flashcard {
+  id               String             @id @default(uuid())
+  userId           String             @map("user_id")
+  frontContent     String             @map("front_content")
+  backContent      String             @map("back_content")
+  imageUrl         String?            @map("image_url")
+  audioUrl         String?            @map("audio_url")
+  easinessFactor   Float              @default(2.5) @map("easiness_factor")
+  repetitions      Int                @default(0)
+  interval         Int                @default(1)
+  nextReviewDate   DateTime           @default(now()) @map("next_review_date")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  repetitionHistory RepetitionHistory[]
+
+  @@map("flashcards")
+}
+
+model RepetitionHistory {
+  id          String    @id @default(uuid())
+  flashcardId String    @map("flashcard_id")
+  quality     Int       // Quality of response (0-5)
+  reviewDate  DateTime  @default(now()) @map("review_date")
+  flashcard   Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+
+  @@map("repetition_history")
+}
+
+
+""" > prisma/schema.prisma
+```
+
+Generating Prisma client.
+```bash
+npx prisma generate
+```
+
+Creating Prisma client instance.
+```
